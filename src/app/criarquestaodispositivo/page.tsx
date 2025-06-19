@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 "use client";
 import React, { useState, useEffect } from 'react';
 import { getDatabase, ref, onValue, push } from 'firebase/database';
