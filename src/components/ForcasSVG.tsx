@@ -4,6 +4,12 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 type Props = {
+  forcaPeso?:number;
+  forcaNormal?:number;
+  forcaAtrito?:number;
+  px?:number;
+  py?:number;
+  forcaResultante?:number;
   aceleracao?: number;
   anguloInicial?: number;
 };

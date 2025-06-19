@@ -111,13 +111,13 @@ const SalaDeAulaTesteSupabase: React.FC = () => {
   const currentQuestion = questoes[currentQuestionIndex];
 
   useEffect(() => {
-    if (salaId) {
-      fetchSala(salaId);
-    } else {
-      setErrorSala("ID da sala não encontrado na URL.");
-      setLoadingSala(false);
-    }
-  }, [salaId]);
+  if (typeof salaId === 'string') {
+    fetchSala(salaId);
+  } else {
+    setErrorSala("ID da sala não encontrado ou inválido.");
+    setLoadingSala(false);
+  }
+}, [salaId]);
 
   useEffect(() => {
     if (sala?.questoes_firebase_ids && sala.created_by_user_id) {
@@ -139,7 +139,7 @@ const SalaDeAulaTesteSupabase: React.FC = () => {
   useEffect(() => {
     if (isTimeRunning && timeRemaining !== null && timeRemaining > 0) {
       const timer = setInterval(() => {
-        setTimeRemaining(prevTime => prevTime - 1);
+        setTimeRemaining(prevTime => prevTime !== null ? prevTime - 1 : null);
       }, 1000);
       return () => clearInterval(timer);
     } else if (timeRemaining === 0 && isTimeRunning) {
@@ -205,6 +205,7 @@ const SalaDeAulaTesteSupabase: React.FC = () => {
       setLoadingQuestoes(false);
     }
   };
+  
   const goToNextQuestion = () => {
     if (currentQuestion?.id && selectedAnswer) {
       setUserAnswers(prevAnswers => ({ ...prevAnswers, [currentQuestion.id]: selectedAnswer }));
@@ -346,7 +347,7 @@ const SalaDeAulaTesteSupabase: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                {!isRevising && !quizFinished && currentQuestion.tempo && (
+                {!isRevising && !quizFinished && currentQuestion.tempo && timeRemaining !== null && (
                   <p className="text-lg text-yellow-300 font-bold mt-3">
                     Tempo restante: {Math.floor(timeRemaining / 60)}:{String(timeRemaining % 60).padStart(2, '0')}
                   </p>

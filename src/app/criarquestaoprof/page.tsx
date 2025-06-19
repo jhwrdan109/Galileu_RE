@@ -12,15 +12,18 @@ import { Clock, XCircle } from 'lucide-react';
 
 const CriarQuestao = () => {
   const [enunciado, setEnunciado] = useState('');
+  const [incognita, setIncognita] = useState('');
   const [resolucao, setResolucao] = useState('');
   const [alternativas, setAlternativas] = useState('');
   const [alternativasVisualizacao, setAlternativasVisualizacao] = useState(['', '', '', '', '']);
   const [tempoMinutos, setTempoMinutos] = useState(0);
   const [tempoSegundos, setTempoSegundos] = useState(0);
-  const [anexo, setAnexo] = useState(null);
+const [anexo, setAnexo] = useState<File | null>(null);
+
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState('');
-  const [imageUrl, setImageUrl] = useState(null);
+const [imageUrl, setImageUrl] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [mostrarModalTempo, setMostrarModalTempo] = useState(false);
   const [alternativaCorreta, setAlternativaCorreta] = useState('');
@@ -60,7 +63,7 @@ const CriarQuestao = () => {
   }, []); // Executa apenas na montagem
 
   // Função para atualizar uma alternativa específica
-  const atualizarAlternativa = (index, valor) => {
+  const atualizarAlternativa = (index: number, valor: string) => {
     const novasAlternativas = [...alternativasVisualizacao];
     novasAlternativas[index] = valor;
     setAlternativasVisualizacao(novasAlternativas);
@@ -73,18 +76,19 @@ const CriarQuestao = () => {
     return <div className="h-screen flex items-center justify-center text-white text-xl">Carregando...</div>;
   }
 
-  const handleAnexoChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAnexo(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
+  const handleAnexoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    setAnexo(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
         setImageUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+};
   const handleRemoveImage = () => {
     setAnexo(null);
     setImageUrl(null);
@@ -100,6 +104,7 @@ const CriarQuestao = () => {
       enunciado: !enunciado.trim() ? 'O enunciado é obrigatório.' : '',
       resolucao: !resolucao.trim() ? 'A resolução é obrigatória.' : '',
       alternativas: !todasAlternativasPreenchidas ? 'Todas as alternativas são obrigatórias.' : '',
+      incognita: !incognita ? 'A incógnita é obrigatória.' : '',
       alternativaCorreta: !alternativaCorreta ? 'A alternativa correta é obrigatória.' : '',
     };
     setErros(novosErros);
@@ -132,7 +137,8 @@ const CriarQuestao = () => {
     }
 
     const letras = ['A', 'B', 'C', 'D', 'E'];
-    const alternativasObj = {};
+const alternativasObj: { [key: string]: string } = {};
+
     const alternativasArray = alternativas.split(',').map((alt) => alt.trim());
     for (let i = 0; i < letras.length; i++) {
       alternativasObj[letras[i]] = alternativasArray[i] || '';
